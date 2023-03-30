@@ -17,6 +17,7 @@ class Config(object):
         config = None
         self.config = {
             'host' : [],
+            'port' : [],
             'cookie' : '',
             'mrs' : []
         }
@@ -24,7 +25,9 @@ class Config(object):
             config = yaml.load(f, Loader=yaml.SafeLoader)
         try:
             for h in config['host']:
-                self.config['host'].append(h )
+                self.config['host'].append(h)
+            for p in config['port']:
+                self.config['port'].append(p)
             self.config['cookie'] = config['cookie'] 
             for m in config['matchreplace']:
                 self.config['mrs'].append(m)

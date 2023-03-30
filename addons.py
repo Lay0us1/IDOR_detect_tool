@@ -24,11 +24,19 @@ class Listener:
         # return False  # for test only
         content = open(path_join('logs/vul.txt'), 'r').read()
         return get_api(flow) in content
+    
+    def __check_port(self, flow: http.HTTPFlow) -> bool:
+        port = flow.request.port 
+        for p in self.config['port']:
+            if type(p) == type(0) and p == port:
+                return True 
+            if type(p) == type('') and re.match(p, str(port)):
+                return True 
+        return False 
 
     def request(self, flow: http.HTTPFlow) -> None:
-        print(self.config)
         for host_pattern in self.config['host']:
-            if re.search(host_pattern, flow.request.pretty_host) and not self.__is_static(flow) and not self.__is_vul_exists(flow):
+            if re.search(host_pattern, flow.request.pretty_host) and self.__check_port(flow) and not self.__is_static(flow) and not self.__is_vul_exists(flow):
                 my_thread(Replay, flow)
                 break
 

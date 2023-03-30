@@ -45,6 +45,5 @@ class Dor:
         keywords = ['succ', 'success', 'ok', 'true', '成功' , '完成', '查询成功', 'OK', 'SUCC', 'yes', 'YES', 'Yes', 'True', 'TRUE', 'true', '已修改', '已存在' , '已添加' , 'exists', 'already']
         return any(keyword in resp for keyword in keywords)
     
-    
     def __similarity(self, str1, str2) -> float:
         return difflib.SequenceMatcher(None, str1, str2).quick_ratio()

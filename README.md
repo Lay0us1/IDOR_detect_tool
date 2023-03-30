@@ -64,3 +64,5 @@ python3 start.py
 ## 检测逻辑
 
 ![230504_ECb2mP](http://cdn2.pic.y1ng.vip/uPic/2023/01/26/230504_ECb2mP.jpg)
+
+「是否静态」那里是和否写反了

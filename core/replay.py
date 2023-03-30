@@ -64,22 +64,29 @@ class Replay:
 
         for k, v in self.__parse_cookie(new_cookie).items():
             flow.request.cookies[k] = v
+
+    def __replace(self, pattern, replace, origin):
+        # 替换，若pattern为正则则正则替换，否则为字符串替换
+        try:
+            ptn = re.compile(pattern)
+            return re.sub(ptn, replace, origin)
+        except Exception:
+            return origin.replace(pattern, replace)
     
     def __match_replace(self, flow: http.HTTPFlow, mrs: list) -> None:
         # Match and replace here.
         for mr in mrs:
-            pattern = re.compile(mr['pattern'])
             if mr['location'] == 'URL':
-                flow.request.url = re.sub(pattern, mr['replace'], flow.request.url)
+                flow.request.url = self.__replace(mr['pattern'], mr['replace'], flow.request.url)
             elif mr['location'] == 'PATH':
-                flow.request.path = re.sub(pattern, mr['replace'], flow.request.path)
+                flow.request.path = self.__replace(mr['pattern'], mr['replace'], flow.request.path)
             elif mr['location'] == 'BODY':
-                flow.request.content = re.sub(pattern, mr['replace'], flow.request.content)
+                flow.request.content = self.__replace(mr['pattern'], mr['replace'], flow.request.content)
             elif mr['location'] == 'HEADER':
                 header_name = mr['replace']['name']
                 header_value = mr['replace']['value']
                 if header_name in flow.request.headers:
-                    flow.request.headers[header_name] = re.sub(pattern, header_value, flow.request.headers[header_name])
+                    flow.request.headers[header_name] = self.__replace( mr['pattern'], header_value, flow.request.headers[header_name])
                 else:
                     flow.request.headers[header_name] = header_value
             else:
