@@ -39,9 +39,12 @@ class Listener:
         for h in self.config['host']:
             try:
                 pattern = re.compile(h)
-                return re.match(pattern, host)
+                if re.match(pattern, host):
+                    return True
             except Exception:
-                return host == pattern
+                if host == pattern:
+                    return True
+        return False
 
     def request(self, flow: http.HTTPFlow) -> None:
         if self.__check_host(flow) and self.__check_port(flow) and not self.__is_static(flow) and not self.__is_vul_exists(flow):
