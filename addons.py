@@ -34,11 +34,18 @@ class Listener:
                 return True 
         return False 
 
+    def __check_host(self, flow: http.HTTPFlow) -> bool:
+        host = flow.request.pretty_host
+        for h in self.config['host']:
+            try:
+                pattern = re.compile(h)
+                return re.match(pattern, host)
+            except Exception:
+                return host == pattern
+
     def request(self, flow: http.HTTPFlow) -> None:
-        for host_pattern in self.config['host']:
-            if re.search(host_pattern, flow.request.pretty_host) and self.__check_port(flow) and not self.__is_static(flow) and not self.__is_vul_exists(flow):
-                my_thread(Replay, flow)
-                break
+        if self.__check_host(flow) and self.__check_port(flow) and not self.__is_static(flow) and not self.__is_vul_exists(flow):
+            my_thread(Replay, flow)
 
 addons = [
     Listener()
